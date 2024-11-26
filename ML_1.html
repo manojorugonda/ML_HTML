@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploring Support Vector Machines with MNIST Dataset</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
+        h1, h2, h3 { color: #007BFF; }
+        img { max-width: 100%; height: auto; }
+        .code-block { background: #f4f4f4; padding: 10px; border-left: 5px solid #007BFF; font-family: monospace; }
+        .note { font-style: italic; color: gray; }
+        .github-link { text-decoration: none; color: #ffffff; background-color: #007BFF; padding: 10px 15px; border-radius: 5px; }
+        .github-link:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Exploring Support Vector Machines with MNIST Dataset</h1>
+            <p>Discover the power of Support Vector Machines (SVMs) in classifying handwritten digits from the famous MNIST dataset.</p>
+        </header>
+
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Support Vector Machines (SVMs) are widely used in classification tasks due to their ability to find an optimal hyperplane for separating data points in high-dimensional space. When combined with techniques like kernel methods, SVMs excel in handling non-linear data.</p>
+            <p>The MNIST dataset provides 70,000 images of handwritten digits (0-9) and is a staple for computer science students learning machine learning. Each image is 28x28 pixels, making it ideal for testing SVMs' capabilities in image classification.</p>
+            <img src="Screenshot 2024-11-26 160456.png" alt="MNIST Dataset Example" title="Sample Images from MNIST Dataset">
+            <p class="note">Figure: Sample handwritten digit images from the MNIST dataset.</p>
+        </section>
+
+        <section id="dataset">
+    <h2>The MNIST Dataset</h2>
+    <p>The MNIST dataset contains grayscale images of handwritten digits labeled from 0 to 9. It is split into 60,000 training samples and 10,000 test samples, with each sample representing a digit as a 28x28 pixel matrix.</p>
+
+    <h3>Features</h3>
+    <p>The following table summarizes the structure of the MNIST dataset:</p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Description</th>
+                <th>Example Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Pixel Intensity</td>
+                <td>Each pixel in the 28x28 image has a grayscale value between 0 (black) and 255 (white).</td>
+                <td>128</td>
+            </tr>
+            <tr>
+                <td>Label (Digit)</td>
+                <td>The digit represented in the image (0–9).</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Image Dimensions</td>
+                <td>The dimensions of the image in pixels.</td>
+                <td>28x28</td>
+            </tr>
+            <tr>
+                <td>Total Features</td>
+                <td>Total number of pixels per image after flattening.</td>
+                <td>784</td>
+            </tr>
+            <tr>
+                <td>Dataset Size</td>
+                <td>Total number of samples in the dataset.</td>
+                <td>70,000</td>
+            </tr>
+        </tbody>
+    </table>
+
+    </section>
+
+        <section id="key-parameters">
+            <h2>Key Parameters of SVMs</h2>
+            <p>SVMs have critical hyperparameters that need tuning for optimal performance:</p>
+            <ul>
+                <li><strong>C:</strong> Regularization parameter controlling the trade-off between maximizing the margin and minimizing classification errors.</li>
+                <li><strong>Kernel:</strong> Determines how data is transformed for non-linear classification. Common choices are:
+                    <ul>
+                        <li>Linear: Best for linearly separable data.</li>
+                        <li>RBF (Radial Basis Function): Popular for non-linear data like MNIST.</li>
+                    </ul>
+                </li>
+                <li><strong>Gamma:</strong> Defines the influence of a single data point in the RBF kernel.</li>
+            </ul>
+        </section>
+
+        <section id="implementation">
+            <h2>Code Implementation</h2>
+            <p>The following code demonstrates training an SVM classifier on a subset of the MNIST dataset, visualizing its performance, and evaluating its accuracy:</p>
+            <div class="code-block">
+<pre>
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, accuracy_score
+
+# Load MNIST data
+mnist = fetch_openml('mnist_784', version=1)
+X, y = mnist.data / 255.0, mnist.target
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train an SVM with RBF kernel
+svm = SVC(kernel='rbf', C=10, gamma=0.05)
+svm.fit(X_train[:10000], y_train[:10000])  # Train on a subset for speed
+
+# Predict and evaluate
+y_pred = svm.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+</pre>
+            </div>
+            <p>The SVM model achieves high accuracy on digit classification, effectively distinguishing between all 10 classes.</p>
+        </section>
+
+        <section id="analysis">
+            <h2>Analysis and Results</h2>
+            <p>Key results and insights from training the SVM model include:</p>
+            <h3>Confusion Matrix</h3>
+            <img src="Screenshot 2024-11-26 154441.png" alt="MNIST Confusion Matrix" title="Confusion Matrix for MNIST Classification">
+            <p class="note">Figure: The confusion matrix shows the model's performance across all 10 digit classes.</p>
+
+            <h3>Accuracy and Challenges</h3>
+            <ul>
+                <li>High accuracy due to SVM's ability to handle high-dimensional data.</li>
+                <li>Misclassifications occur in digits with similar shapes (e.g., 3 and 5).</li>
+            </ul>
+        </section>
+
+        <section id="github">
+            <h2>GitHub Repository</h2>
+            <p>The code for training and evaluating the SVM on the MNIST dataset is available on GitHub. Explore the repository to try different kernels, hyperparameters, or other datasets:</p>
+            <a href="https://github.com/manojorugonda/ML-Repository" target="_blank" class="github-link">View on GitHub</a>
+        </section>
+
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>The MNIST dataset demonstrates the effectiveness of SVMs in solving high-dimensional classification problems. By leveraging kernels like RBF, SVMs excel at handling complex non-linear patterns. With proper hyperparameter tuning, SVMs achieve competitive accuracy, making them a valuable tool for image classification tasks.</p>
+            <p>Computer science students are encouraged to experiment further by integrating feature extraction techniques or testing with other large-scale image datasets.</p>
+        </section>
+    </div>
+</body>
+</html>
